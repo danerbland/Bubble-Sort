@@ -27,6 +27,12 @@ const Product = db.define('product', {
     type: Sequelize.INTEGER,
     allowNull: false,
     defaultValue: 0
+  },
+
+  consolidatedRating: {
+    type: Sequelize.FLOAT,
+    allowNull: false,
+    defaultValue: 0
   }
 })
 
