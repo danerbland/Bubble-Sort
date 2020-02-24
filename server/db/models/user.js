@@ -55,6 +55,11 @@ const User = db.define('user', {
   }
 })
 
+//Instance Methods
+User.prototype.correctPassword = function(pwd){
+  return User.encryptPassword(pwd, this.salt()) === this.password()
+}
+
 //Class Methods
 User.generateSalt = () => {
   return crypto.randomBytes(16).toString('base64')
@@ -70,8 +75,8 @@ User.encryptPassword = (pwd, salt) => {
 
 const setSaltAndPassword = (user) => {
   if(user.changed('password')){
-    user.salt = user.generateSalt()
-    user.password = User.encryptPassword(user.password, user.salt)
+    user.salt = User.generateSalt()
+    user.password = User.encryptPassword(user.password(), user.salt())
   }
 }
 
