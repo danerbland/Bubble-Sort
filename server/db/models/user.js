@@ -55,5 +55,38 @@ const User = db.define('user', {
   }
 })
 
+//Class Methods
+User.generateSalt = () => {
+  return crypto.randomBytes(16).toString('base64')
+}
+
+User.encryptPassword = (pwd, salt) => {
+  return crypto
+  .createHash('RSA-SHA256')
+  .update(pwd)
+  .update(salt)
+  .digest('hex')
+}
+
+const setSaltAndPassword = (user) => {
+  if(user.changed('password')){
+    user.salt = user.generateSalt()
+    user.password = User.encryptPassword(user.password, user.salt)
+  }
+}
+
+//hooks
+
+User.beforeCreate((user) => {
+  setSaltAndPassword(user)
+})
+
+User.beforeUpdate((user) => {
+  setSaltAndPassword(user)
+})
+
+User.beforeBulkCreate((users) => {
+  users.forEach(user => setSaltAndPassword(user))
+})
 
 module.exports = User
